@@ -35,7 +35,7 @@ def make_data_color(datadir, categories, img_size):
             except Exception as e:
                 print("Error in reading data")
     
-    print("Data readed!\nLenght of the traning data: ", len(training_data))
+    print("Data readed!\nLength of the dataset: ", len(training_data))
     
     random.shuffle(training_data)
     
@@ -48,7 +48,7 @@ def make_data_color(datadir, categories, img_size):
     
     X = np.array(X).reshape(-1, img_size, img_size, 3)
     
-    np.save(datadir+"/traning_dataset", training_data)
+    np.save(datadir+"_dataset", training_data)
     
     return X, y
 
@@ -74,7 +74,7 @@ def make_data_gray(datadir, categories, img_size):
             except Exception as e:
                 print("Error in reading data")
     
-    print("Data readed!\nLenght of the traning data: ", len(training_data))
+    print("Data readed!\nLength of the dataset: ", len(training_data))
     
     random.shuffle(training_data)
     
@@ -87,16 +87,18 @@ def make_data_gray(datadir, categories, img_size):
     
     X = np.array(X).reshape(-1, img_size, img_size, 1)
     
-    np.save(datadir+"/traning_dataset", training_data)
+    np.save(datadir+"_dataset", training_data)
     
     return X, y    
     
     
-def make_data(datadir, categories, img_size, gray):
+def make_data(datadir, categories, img_size, gray = False):
     if gray:
-        return make_data_gray(datadir, categories, img_size)
+        X, y = make_data_gray(datadir, categories, img_size)
+        return np.array(X, "float32"), np.array(y, "float32")
     else:
-        return make_data_color(datadir, categories, img_size)
+        X, y = make_data_color(datadir, categories, img_size)
+        return np.array(X, "float32"), np.array(y, "float32")
     
     
     

@@ -11,30 +11,26 @@ from keras.models import Sequential
 from keras.layers import Conv2D, MaxPool2D, Dropout, Dense, Flatten
 
 #%%
-def build_cnn_model(n_classes, img_size = 64, filter_size = 3, gray_scale = False, drop_prob = 0):
-    if gray_scale:
-        n_channels = 1
-    else:
-        n_channels = 3
+def build_cnn_model(n_classes, input_shape, filter_size = 3, dray_scale = False, drop_prob = 0.0):
     
     model = Sequential()
     
-    model.add(Conv2D(32, (filter_size, filter_size), input_shape=(n_channels, img_size, img_size),
-                     activation="relu", padding="same")
+    model.add(Conv2D(32, (filter_size, filter_size), input_shape=input_shape,
+                     activation="relu", padding="same"))
     model.add(Dropout(drop_prob))
     
-    model.add(Conv2D(32, (filter_size, filter_size), input_shape=(n_channels, img_size, img_size),
-                     activation="relu", padding="same")
-    model.add(Dropout(drop_prob))
-    model.add(MaxPool2D(pool_size=(2,2)))
-    
-    model.add(Conv2D(64, (filter_size, filter_size), input_shape=(n_channels, img_size, img_size),
-                     activation="relu", padding="same")
+    model.add(Conv2D(32, (filter_size, filter_size), input_shape=input_shape,
+                     activation="relu", padding="same"))
     model.add(Dropout(drop_prob))
     model.add(MaxPool2D(pool_size=(2,2)))
     
-    model.add(Conv2D(128, (filter_size, filter_size), input_shape=(n_channels, img_size, img_size),
-                     activation="relu", padding="same")
+    model.add(Conv2D(64, (filter_size, filter_size), input_shape=input_shape,
+                     activation="relu", padding="same"))
+    model.add(Dropout(drop_prob))
+    model.add(MaxPool2D(pool_size=(2,2)))
+    
+    model.add(Conv2D(128, (filter_size, filter_size), input_shape=input_shape,
+                     activation="relu", padding="same"))
     model.add(Dropout(drop_prob))
     model.add(MaxPool2D(pool_size=(2,2)))
     
