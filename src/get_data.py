@@ -14,8 +14,7 @@ import cv2
 import random
 
 #%% 
-
-def make_data(datadir, categories, img_size):
+def make_data_color(datadir, categories, img_size):
     """
     This function take a dataset of images and transform to a numpy array and save it.
     :param datadir: path to the dataset.
@@ -93,7 +92,11 @@ def make_data_gray(datadir, categories, img_size):
     return X, y    
     
     
-    
+def make_data(datadir, categories, img_size, gray):
+    if gray:
+        return make_data_gray(datadir, categories, img_size)
+    else:
+        return make_data_color(datadir, categories, img_size)
     
     
     
