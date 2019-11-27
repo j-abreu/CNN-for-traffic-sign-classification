@@ -61,18 +61,36 @@ model = build_model.build_cnn_model(n_classes, X_train.shape[1:], drop_prob = 0.
 model_check = ModelCheckpoint("/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/CNN-for-traffic-sign-classification/trained_models.hdf5",
                               monitor="val_acc", verbose=1, save_best_only=True, mode="max")
 
-early_stop = EarlyStopping(monitor="val_acc", patience=20)
+early_stop = EarlyStopping(monitor="val_acc", patience=10)
 
 #%%
 batch_size = 32
-epochs = 200
+epochs = 20
 
 
 history = model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, validation_data=(X_test, y_test),
                     callbacks=[model_check, early_stop], verbose=2)
 
 #%%
+print(history.history.keys())
 
+plt.plot(history.history["accuracy"])
+plt.plot(history.history["val_accuracy"])
+plt.title("Model Accuracy")
+plt.xlabel("Epochs")
+plt.ylabel("Accuracy")
+plt.legend(["Train", "Test"], loc="best")
+plt.savefig("/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/CNN-for-traffic-sign-classification/figures/model_acc.png")
+plt.show()
+
+plt.plot(history.history["loss"])
+plt.plot(history.history["val_loss"])
+plt.title("Model Accuracy")
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.legend(["Train", "Test"], loc="best")
+plt.savefig("/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/CNN-for-traffic-sign-classification/figures/model_loss.png")
+plt.show()
 
 
 
