@@ -42,9 +42,11 @@ def build_cnn_model(n_classes, input_shape, filter_size = 3, dray_scale = False,
     model.add(Dropout(drop_prob))
     model.add(Dense(n_classes, activation="softmax"))
     
-    model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
-    
-    model.summary()
+# =============================================================================
+#     model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
+#     
+#     model.summary()
+# =============================================================================
     
     return model
     

@@ -11,9 +11,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import sys
+import cv2
+import tensorflow as tf
 
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPool2D
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.utils import np_utils
 from sklearn.model_selection import train_test_split
@@ -58,7 +58,7 @@ n_classes = y_train.shape[1]
 
 model = build_model.build_cnn_model(n_classes, X_train.shape[1:], drop_prob = 0.2)
 
-model_check = ModelCheckpoint("/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/CNN-for-traffic-sign-classification/trained_models.hdf5",
+model_check = ModelCheckpoint("/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/CNN-for-traffic-sign-classification/trained_models/weights.hdf5",
                               monitor="val_acc", verbose=1, save_best_only=True, mode="max")
 
 early_stop = EarlyStopping(monitor="val_acc", patience=10)
@@ -91,6 +91,42 @@ plt.ylabel("Loss")
 plt.legend(["Train", "Test"], loc="best")
 plt.savefig("/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/CNN-for-traffic-sign-classification/figures/model_loss.png")
 plt.show()
+
+#%%
+
+results = model.evaluate(X_hold, y_hold, batch_size=batch_size)
+print("Accuracy: {:.2f}%".format(results[1]*100))
+
+
+#%%
+
+model_json = model.to_json()
+
+with open("/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/CNN-for-traffic-sign-classification/trained_models/checkpoint.json", "w") as json_file:
+    json_file.write(model_json)
+
+
+model.save_weights("/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/CNN-for-traffic-sign-classification/trained_models/weights.hdf5")
+
+
+
+
+#%%
+
+img_array = cv2.imread("/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/teste/9.png")
+img_array = cv2.resize(img_array, (img_size, img_size))
+img_array = np.array(img_array, "float32").reshape(-1, img_size, img_size, 3)
+img_array = img_array/255.0
+#%%
+
+prediction = model.predict(img_array)
+
+idx = tf.argmax(prediction, axis=1)
+print(categories[int(idx)])
+
+
+
+
 
 
 
