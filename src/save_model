@@ -10,88 +10,82 @@ from keras.models import Sequential
 from keras.layers import Conv2D, MaxPool2D, Dropout, Dense, Flatten
 import tensorflow as tf
 import pathlib
+import numpy as np
+import cv2
+import os
 #%%
-def build_cnn_model(n_classes = 18, input_shape = (64, 64, 3), filter_size = 3, gray_scale = False, drop_prob = 0.2):
-    
-    model = Sequential()
-    
-    model.add(Conv2D(32, (filter_size, filter_size), input_shape=input_shape,
-                     activation="relu", padding="same"))
-    model.add(Dropout(drop_prob))
-    
-    model.add(Conv2D(32, (filter_size, filter_size), input_shape=input_shape,
-                     activation="relu", padding="same"))
-    model.add(Dropout(drop_prob))
-    model.add(MaxPool2D(pool_size=(2,2)))
-    
-    model.add(Conv2D(64, (filter_size, filter_size), input_shape=input_shape,
-                     activation="relu", padding="same"))
-    model.add(Dropout(drop_prob))
-    model.add(MaxPool2D(pool_size=(2,2)))
-    
-    model.add(Conv2D(128, (filter_size, filter_size), input_shape=input_shape,
-                     activation="relu", padding="same"))
-    model.add(Dropout(drop_prob))
-    model.add(MaxPool2D(pool_size=(2,2)))
-    
-    model.add(Flatten())
-    model.add(Dropout(drop_prob))
-    model.add(Dense(512, activation="relu"))
-    model.add(Dropout(drop_prob))
-    model.add(Dense(256, activation="relu"))
-    model.add(Dropout(drop_prob))
-    model.add(Dense(n_classes, activation="softmax"))
-    
-    return model
 
-model = build_cnn_model()
-
+model = tf.kerSequential([Conv2D(32, (3, 3), input_shape=(64,64,3), activation="relu", padding="same"),
+                    Dropout(0.2), Conv2D(32, (3, 3), input_shape=(64,64,3),activation="relu", padding="same"),
+                    Dropout(0.2), MaxPool2D(pool_size=(2,2)), Conv2D(64, (3, 3), input_shape=(64,64,3), activation="relu", padding="same"),
+                    Dropout(0.2), MaxPool2D(pool_size=(2,2)), Conv2D(128, (3, 3), input_shape=(64,64,3), activation="relu", padding="same"),
+                    Dropout(0.2), MaxPool2D(pool_size=(2,2)), Flatten(), Dropout(0.2), Dense(512, activation="relu"),
+                    Dropout(0.2), Dense(256, activation="relu"), Dropout(0.2), Dense(18, activation="softmax")])
 model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
-
+model.summary()
+#%%
 model.load_weights("/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/CNN-for-traffic-sign-classification/trained_models/weights.hdf5")
 
 #%%
 
-export_dir = "/tmp/saved_model"
-
-tf.saved_model.save(model, export_dir)
-
-#%%
-tf.lite.TFLiteConverter.from_saved_model()
-
-
-
-#%%
-x = [-1, 0, 1, 2, 3, 4]
-y = [-3, -1, 1, 3, 4, 7]
-
-model = tf.keras.models.Sequential([tf.keras.layers.Dense(units=1, input_shape=[1])])
-model.compile(optimizer='sgd', loss='mean_squared_error')
-model.fit(x, y, epochs=500)
-
-#%%
 export_dir = "/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/CNN-for-traffic-sign-classification/tflite/saved_model"
+#%%
 tf.saved_model.save(model, export_dir)
 
-i = []
-i.append(-1)
-i.append(0)
+#%%
+converter = tf.lite.TFLiteConverter.from_saved_model(export_dir)
+tflite_model = converter.convert()
 
-r = model(i[0])
-
-
-
-
+#%%
+tflite_model_file = pathlib.Path("/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/CNN-for-traffic-sign-classification/tflite/model.tflite")
+tflite_model_file.write_bytes(tflite_model)
 
 
 
+#%%
+datadir = "/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/BelgiumTSC/Training"
+
+categories = []
+
+for folder in os.listdir(datadir):
+    categories.append(folder)
+    
+img_size = 64
+
+img_array = cv2.imread("/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/teste/12.png")
+img_array = cv2.resize(img_array, (img_size, img_size))
+img_array = np.array(img_array, "float32").reshape(1, img_size, img_size, 3)
+img_array = img_array/255.0
+#%%
+interpreter = tf.lite.Interpreter(model_content=tflite_model)
+interpreter.allocate_tensors()
+
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
 
 
+interpreter.set_tensor(input_details[0]["index"], img_array)
+interpreter.invoke()
+tflite_results = interpreter.get_tensor(output_details[0]["index"])
+
+#%%
+idx = tf.argmax(tflite_results, axis=1)
+print(categories[int(idx)])
 
 
+#%%
 
+for i in range(len(categories)):
+    categories[i] = categories[i].replace("_", " ")
+cat = ""
 
-
+for i in categories:
+    cat += i+"\n"
+#%%
+path = "/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/CNN-for-traffic-sign-classification/tflite/labels.txt"
+with open(path, "w") as file:
+    file.write(cat)
+    
 
 
 

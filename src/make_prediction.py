@@ -45,9 +45,13 @@ img_size = 64
 
 img_array = cv2.imread("/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/teste/02434_00001.ppm")
 img_array = cv2.resize(img_array, (img_size, img_size))
-img_array = np.array(img_array, "float32").reshape(-1, img_size, img_size, 3)
+img_array = np.array(img_array, "float32").reshape(img_size, img_size, 3)
 img_array = img_array/255.0
 
+
+#%%
+
+res = model(img_array)
 
 #%%
 

@@ -66,7 +66,7 @@ early_stop = EarlyStopping(monitor="val_acc", patience=10)
 #%%
 batch_size = 32
 epochs = 20
-
+#%%
 
 history = model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, validation_data=(X_test, y_test),
                     callbacks=[model_check, early_stop], verbose=2)
