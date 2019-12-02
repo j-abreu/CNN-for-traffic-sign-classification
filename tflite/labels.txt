@@ -1,4 +1,5 @@
-no entry for all drivers
 no parking
+no right turn
+one way traffic
 pedestrian crosswalk
-stop
+priority road

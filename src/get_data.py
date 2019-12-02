@@ -92,8 +92,8 @@ def make_data_gray(datadir, categories, img_size):
     return X, y    
     
     
-def make_data(datadir, categories, img_size, gray = False):
-    if gray:
+def make_data(datadir, categories, img_size, gray_scale = False):
+    if gray_scale:
         X, y = make_data_gray(datadir, categories, img_size)
         return np.array(X, "float32"), np.array(y, "float32")
     else:
