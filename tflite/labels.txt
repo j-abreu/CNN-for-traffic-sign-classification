@@ -1,18 +1,3 @@
-dead end
-mandatory traffic circle
-no entry for all drivers
-no left turn
-no overtaking of cars
-no parking
-no right turn
-no traffic allowed in both directions
-no waiting or parking
-one way traffic
-parking allowed
-parking exclusively for motorscars
-pedestrian crosswalk
-priority road
-priority to the right
-speed bump
-stop
-yield right of way
+pare
+ponto de onibus
+proibido estacionar
