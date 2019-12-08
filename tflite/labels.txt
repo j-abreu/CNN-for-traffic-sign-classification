@@ -1,3 +1,7 @@
+faixa de pedestres
+nada detectado
 pare
+pista irregular
 ponto de onibus
 proibido estacionar
+proibido estacionar ou parar
