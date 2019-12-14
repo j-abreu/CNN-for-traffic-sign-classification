@@ -11,11 +11,59 @@ from keras.preprocessing.image import ImageDataGenerator
 import os
 import cv2
 import numpy as np
+import math
 
 #%%
-path = "/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/BelgiumTSC/Training/priority_road"
 
-img_size = 128
+folder = "proibido_estacionar"
+
+path = "/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/ufpa_dataset/"+folder
+
+img_size = 256
+training_data = []
+
+for img in os.listdir(path):
+    
+    img_array = cv2.imread(os.path.join(path, img))
+    new_array = cv2.resize(img_array, (img_size, img_size))
+    training_data.append(new_array)
+
+training_data = np.array(training_data, "float32").reshape(len(training_data), img_size, img_size, 3)
+
+print("Data readed!\nLength of the dataset: ", len(training_data))
+
+y = [1 for i in range(len(training_data))]
+
+ty = np.array(y, "float32").reshape(len(y), 1)
+#%%
+rotation = 30
+shift = 0.1
+flip = False
+zoom = 0.2
+
+datagen = ImageDataGenerator(rotation_range=rotation, width_shift_range=shift, height_shift_range=shift,
+                             zoom_range=zoom)
+
+#datagen = ImageDataGenerator()
+
+datagen.fit(training_data)
+
+dir = "/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/ufpa_dataset_aug/"+folder
+
+k = 1
+qtd = len(training_data)
+qtd = 4
+for i in range(k):
+    for X, y in datagen.flow(training_data, y, batch_size=qtd, save_to_dir=dir, save_prefix="aug", save_format="ppm"):
+        break
+
+
+#%%
+img_size = 64
+folder = "faixa_de_pedestres"
+        
+path = "/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/ufpa_dataset_aug/Training/"+folder
+
 training_data = []
 
 for img in os.listdir(path):
@@ -32,18 +80,15 @@ y = [1 for i in range(len(training_data))]
 
 y = np.array(y, "float32").reshape(len(y), 1)
 #%%
-rotation = 30
-shift = 0.1
-flip = False
-zoom = 0.2
-datagen = ImageDataGenerator(rotation_range = rotation, width_shift_range=shift, height_shift_range=shift, 
-                             horizontal_flip=flip, vertical_flip=flip, zoom_range=zoom)
+
+datagen = ImageDataGenerator(zca_whitening=True)
 
 datagen.fit(training_data)
 
-dir = "/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/BelgiumTSC_v2/Training/priority_road"
+dir = "/media/jeremiah/7E9BF5A34D96B6A4/2019.4/PE3/ufpa_dataset_aug/"+folder
 
 k = 1
+
 for i in range(k):
     for X, y in datagen.flow(training_data, y, batch_size=len(training_data), save_to_dir=dir, save_prefix="aug", save_format="png"):
         break
